@@ -106,6 +106,7 @@ namespace SystemOfLinearEquationsCalculator
         private static Line BuildLine(double a, double b, double c)
         {
             var line = new Line { Stroke = Brushes.Black, StrokeThickness = 2 };
+            bool change;
 
             if (a < b)
             {
@@ -121,56 +122,25 @@ namespace SystemOfLinearEquationsCalculator
                 line.Y2 = -200;
                 line.X2 = (c - b * 200) / a;
             }
+            
+            (line.Y1, change) = SubBuildLine(line.Y1);
+            if (change) line.X1 = (c - b * -line.Y1) / a;
+            
+            (line.X1, change) = SubBuildLine(line.X1);
+            if (change) line.Y1 = -(c - b * line.X1) / a;
+            
+            (line.Y2, change) = SubBuildLine(line.Y2);
+            if (change) line.X2 = (c - b * -line.Y2) / a;
 
-            if (line.Y1 > 200)
-            {
-                line.X1 = (c - b * -200) / a;
-                line.Y1 = 200;
-            }
-
-            if (line.Y1 < -200)
-            {
-                line.X1 = (c - b * 200) / a;
-                line.Y1 = -200;
-            }
-
-            if (line.X1 > 200)
-            {
-                line.Y1 = -(c - a * 200) / b;
-                line.X1 = 200;
-            }
-
-            if (line.X1 < -200)
-            {
-                line.Y1 = -(c - a * -200) / b;
-                line.X1 = -200;
-            }
-
-            if (line.Y2 > 200)
-            {
-                line.X2 = (c - b * -200) / a;
-                line.Y2 = 200;
-            }
-
-            if (line.Y2 < -200)
-            {
-                line.X2 = (c - b * 200) / a;
-                line.Y2 = -200;
-            }
-
-            if (line.X2 > 200)
-            {
-                line.Y2 = -(c - a * 200) / b;
-                line.X2 = 200;
-            }
-
-            if (line.X2 < -200)
-            {
-                line.Y2 = -(c - a * -200) / b;
-                line.X2 = -200;
-            }
+            (line.X2, change) = SubBuildLine(line.X2);
+            if (change) line.Y2 = -(c - b * line.X2) / a;
             
             return line;
         }
+
+        private static (double, bool) SubBuildLine(double number)=>
+            number > 200 ? (200, true) :
+            number < -200 ? (-200, true) :
+            (number, false);
     }
 }
