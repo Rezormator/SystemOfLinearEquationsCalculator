@@ -1,0 +1,104 @@
+﻿<Window x:Class="SystemOfLinearEquationsCalculator.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="System of linear equations calculator" Height="750" Width="1600" Background="#191919" MinHeight="738" MinWidth="1355"
+    WindowState="Maximized">
+    
+    <Window.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="70"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#1f1f1f"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#333333"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Width="150" Background="#1f1f1f">
+            <TextBlock TextAlignment="Center" Background="#1f1f1f" Width="150" Height="25" Foreground="White" FontSize="16" Margin="0, 5, 0, 5">
+                Select system size
+            </TextBlock>
+            
+            <ComboBox x:Name="SizeSelector" SelectionChanged="SizeSelector_SelectionChanged" SelectedIndex="0" Width="150" FontSize="16" Height="35"/>
+            
+            <Button Click="KramerMethod_Click" Style="{StaticResource ButtonStyle}">
+                <TextBlock TextAlignment="Center" Foreground="White">Kramer method</TextBlock>
+            </Button>
+            
+            <Button Click="GaussMethodWithSingleCoefficientsButton_Click" Style="{StaticResource ButtonStyle}">
+                <TextBlock TextAlignment="Center" Foreground="White">Gauss method with <LineBreak/> single coefficients</TextBlock>
+            </Button>
+            
+            <Button Click="GaussMethodWithMainElementButton_Click" Style="{StaticResource ButtonStyle}">
+                <TextBlock TextAlignment="Center" Foreground="White">Gauss method with <LineBreak/> main element</TextBlock>
+            </Button>
+            
+            <Button Click="GenerateSystemButton_Click" Style="{StaticResource ButtonStyle}">
+                <TextBlock TextAlignment="Center" Foreground="White">Generate system</TextBlock>
+            </Button>
+            
+            <Button Click="CalculateButton_Click" Style="{StaticResource ButtonStyle}">
+                <TextBlock TextAlignment="Center" Foreground="White">Calculate</TextBlock>
+            </Button>
+            
+            <Button Click="ClearSystemButton_Click" Style="{StaticResource ButtonStyle}" VerticalAlignment="Bottom">
+                <TextBlock TextAlignment="Center" Foreground="White">Clear system</TextBlock>
+            </Button>
+            
+            <StackPanel x:Name="WriteToFilePanel" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="150" Visibility="Hidden">
+                <TextBlock TextAlignment="Center" Background="#1f1f1f" Width="150" Height="25" Foreground="White" FontSize="16" Margin="0, 5, 0, 5">
+                    Enter file name
+                </TextBlock>
+            
+                <TextBox x:Name="FileName" Width="150" Height="35" Text="Solutions" FontSize="16"></TextBox>
+            
+                <Button Click="WriteSystemToFile_Click" Style="{StaticResource ButtonStyle}" VerticalAlignment="Bottom">
+                    <TextBlock TextAlignment="Center" Foreground="White">Write system to file</TextBlock>
+                </Button>
+            
+                <TextBlock x:Name="WriteSystemToFileErrors" TextAlignment="Center" Width="130" Height="25" Margin="0, 10, 0 ,0" Foreground="White"/>
+            </StackPanel>
+        </StackPanel>
+        
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="150">
+            <Button Click="ExitButton_Click" Style="{StaticResource ButtonStyle}" VerticalAlignment="Bottom">
+                <TextBlock TextAlignment="Center" Foreground="White">Exit</TextBlock>
+            </Button>
+        </StackPanel>
+        
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" Margin="0, 0, 150, 0">
+            <StackPanel Width="1770" HorizontalAlignment="Left">
+                <TextBlock x:Name="MethodName" Height="60" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10, 10, 0, 0" Foreground="White" FontSize="40">
+                    Calculating with Kramer method
+                </TextBlock>
+                
+                <Grid x:Name="SystemGrid" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10, 10, 0, 0"/>
+                
+                <TextBlock x:Name="Results" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 10, 150, 0" Foreground="White" FontSize="20"/>
+                
+                <Canvas Name="FullSystemOfCoordinates" Height="0" Background="White" HorizontalAlignment="Left" Margin="10, 10, 150, 10" Visibility="Visible">
+                    <Canvas Name="SystemOfCoordinates" Height="200" Width="200" Margin="200, 200, 0, 0"></Canvas>
+                </Canvas>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
