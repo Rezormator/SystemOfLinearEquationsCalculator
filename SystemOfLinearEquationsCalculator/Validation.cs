@@ -19,37 +19,27 @@ namespace SystemOfLinearEquationsCalculator
                     var element = system.Children.Cast<UIElement>()
                         .FirstOrDefault(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
 
-                    if (!(element is TextBox textBox))
-                        continue;
+                    if (!(element is TextBox textBox)) continue;
                     
-                    if (double.TryParse(textBox.Text, out _))
-                    {
-                        if (textBox.Text.Contains(" ") == false)
-                        {
-                            textBox.BorderBrush = Brushes.Gray;
-                            continue;
-                        } 
-                        
-                        MessageBox.Show("Error: values contains spaces");
-                    }
+                    textBox.BorderBrush = Brushes.Gray;
                     
-                    MessageBox.Show("Error: values are not in double format");
+                    if (double.TryParse(textBox.Text, out _) && textBox.Text.Contains(" ") == false) continue;
+                    
                     textBox.BorderBrush = Brushes.Red;
                     isValidMatrix = false;
                 }
             }
             
+            if (!isValidMatrix) MessageBox.Show("Error: values are not in double format or contain a space");
+            
             return isValidMatrix;
         }
         
-        public static bool IsValidSystem(double[,] matrix)
+        public static bool IsValidSystem(Matrix matrix)
         {
-            var simpleOperationsAmount = 0;
-            if (Calculations.CalculateDeterminant(matrix, ref simpleOperationsAmount) != 0)
-                return true;
-            
+            var iterationsAmount = 0;
+            if (Calculations.CalculateDeterminant(matrix, ref iterationsAmount) != 0) return true;
             MessageBox.Show("Error: determinant equal 0");
-            
             return false;
         }
         
@@ -59,8 +49,7 @@ namespace SystemOfLinearEquationsCalculator
                 && !double.IsPositiveInfinity(result) && !double.IsNegativeInfinity(result) 
                 && result < double.MaxValue && result > double.MinValue);
             
-            if (!isValidResults)
-                MessageBox.Show("Error: results are not in double format");
+            if (!isValidResults) MessageBox.Show("Error: results are not in double format");
             
             return isValidResults;
         }
@@ -70,8 +59,7 @@ namespace SystemOfLinearEquationsCalculator
             var invalidChars = Path.GetInvalidFileNameChars();
             var isValidFileName = !fileName.Any(ch => invalidChars.Contains(ch));
 
-            if (!isValidFileName)
-                MessageBox.Show("Error: invalid file name");
+            if (!isValidFileName) MessageBox.Show("Error: invalid file name");
 
             return isValidFileName;
         }

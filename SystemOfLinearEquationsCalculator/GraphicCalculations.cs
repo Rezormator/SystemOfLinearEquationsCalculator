@@ -7,7 +7,7 @@ namespace SystemOfLinearEquationsCalculator
 {
     public static class GraphicCalculations
     {
-        public static void GraphicalSolution(double[,] matrix, double[] subMatrix, double[] results, TextBlock textBlock)
+        public static void GraphicalSolution(Matrix matrix, double[] subMatrix, double[] results, TextBlock textBlock)
         {
             if (matrix[0, 0] == 0)
             {
@@ -40,7 +40,7 @@ namespace SystemOfLinearEquationsCalculator
                 $"y = {results[1]}\n";
         }
         
-        public static void ShowSystemOfCoordinates(double[,] matrix, double[] subMatrix, double[] results, Canvas fullSystem, Canvas system)
+        public static void ShowSystemOfCoordinates(Matrix matrix, double[] subMatrix, double[] results, Canvas fullSystem, Canvas system)
         {
             fullSystem.Height = 400;
             fullSystem.Width = 400;
@@ -72,9 +72,9 @@ namespace SystemOfLinearEquationsCalculator
             AddLine(results[0] / sizeDif, results[0] / sizeDif, -5, 5, system, Brushes.Black, 2);
 
             var y = -(results[1] / sizeDif);
-            AddTextBlock(results[1].ToString("0.000"), 11, y < 0 ? y : y -25, system, Brushes.Red);
+            AddTextBlock($"{results[1]:0.###E+0}", 11, y < 0 ? y : y -25, system, Brushes.Red);
             var x = results[0] / sizeDif - 25;
-            AddTextBlock(results[0].ToString("0.000"), x > 0 ? x : x + 25, -28, system, Brushes.Blue);
+            AddTextBlock($"{results[0]:0.###E+0}", x > 0 ? x -60 : x + 25, -28, system, Brushes.Blue);
             
             var point = new Ellipse { Stroke = Brushes.Green, Height = 10, Width = 10 };
             Canvas.SetLeft(point, results[0] / sizeDif - point.Width / 2);
@@ -89,13 +89,13 @@ namespace SystemOfLinearEquationsCalculator
             system.Children.Clear();
         }
 
-        private static void AddLine(double x1, double x2, double y1, double y2, Canvas system, Brush color, double thickness)
+        private static void AddLine(double x1, double x2, double y1, double y2, Panel system, Brush color, double thickness)
         {
             var line = new Line { Stroke = color, StrokeThickness = thickness, X1 = x1, X2 = x2, Y1 = y1, Y2 = y2 };
             system.Children.Add(line);
         }
         
-        private static void AddTextBlock(string text, double x, double y, Canvas system, Brush color)
+        private static void AddTextBlock(string text, double x, double y, Panel system, Brush color)
         {
             var textBlock = new TextBlock {Text = text, FontSize = 16, Foreground = color};
             Canvas.SetLeft(textBlock, x);
@@ -127,13 +127,13 @@ namespace SystemOfLinearEquationsCalculator
             if (change) line.X1 = (c - b * -line.Y1) / a;
             
             (line.X1, change) = SubBuildLine(line.X1);
-            if (change) line.Y1 = -(c - b * line.X1) / a;
+            if (change) line.Y1 = -(c - a * line.X1) / b;
             
             (line.Y2, change) = SubBuildLine(line.Y2);
             if (change) line.X2 = (c - b * -line.Y2) / a;
-
+            
             (line.X2, change) = SubBuildLine(line.X2);
-            if (change) line.Y2 = -(c - b * line.X2) / a;
+            if (change) line.Y2 = -(c - a * line.X2) / b;
             
             return line;
         }
