@@ -5,10 +5,9 @@ namespace SystemOfLinearEquationsCalculator
 {
     public static class SystemToFile
     {
-        public static void WriteToTheFile(double[,] matrix, double[] subMatrix, double[] results, string fileName)
+        public static void WriteToTheFile(Matrix matrix, double[] subMatrix, double[] results, string fileName)
         {
-            if (!Validation.IsValidFileName(fileName))
-                return;
+            if (!Validation.IsValidFileName(fileName)) return;
             
             var directory = Directory.GetCurrentDirectory();
             directory = directory.Replace("\\SystemOfLinearEquationsCalculator\\bin\\Debug", "");
@@ -19,20 +18,23 @@ namespace SystemOfLinearEquationsCalculator
                 using (var writer = File.AppendText(filePath))
                 {
                     writer.WriteLine("System:");
-                    for (var i = 0; i < subMatrix.Length; i++)
+                    for (var i = 0; i < matrix.Rows; i++)
                     {
-                        for (var j = 0; j < subMatrix.Length; j++)
+                        for (var j = 0; j < matrix.Rows; j++)
+                        {
                             writer.Write("+ (" + matrix[i, j] + ")x" + (j + 1) + " ");
+                        }
 
                         writer.WriteLine("= " + subMatrix[i]);
                     }
 
                     writer.WriteLine("\nSolutions:");
-                    for (var i = 0; i < subMatrix.Length; i++)
+                    for (var i = 0; i < results.Length; i++)
+                    {
                         writer.WriteLine("x" + (i + 1) + " = " + results[i]);
+                    }
 
                     writer.WriteLine("\n");
-                    
                     MessageBox.Show("System write to file");
                 }
             } 

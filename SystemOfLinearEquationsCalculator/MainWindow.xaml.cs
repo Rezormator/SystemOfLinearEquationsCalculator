@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SystemOfLinearEquationsCalculator
 {
@@ -9,7 +10,7 @@ namespace SystemOfLinearEquationsCalculator
     {
         private int _calculationMethod;
         private int _size;
-        private double[,] _matrix;
+        private Matrix _matrix;
         private double[] _subMatrix;
         private double[] _results;
 
@@ -18,7 +19,9 @@ namespace SystemOfLinearEquationsCalculator
             InitializeComponent();
 
             for (var i = 2; i <= 9; i++)
+            {
                 SizeSelector.Items.Add(new ComboBoxItem { Content = i });
+            }
 
             _size = 2;
             _calculationMethod = 0;
@@ -27,8 +30,7 @@ namespace SystemOfLinearEquationsCalculator
 
         private void SizeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SystemGrid == null)
-                return;
+            if (SystemGrid == null) return;
 
             ClearFields();
             _size = int.Parse(((ComboBoxItem)SizeSelector.SelectedItem).Content.ToString());
@@ -63,50 +65,46 @@ namespace SystemOfLinearEquationsCalculator
         {
             ClearFields();
 
-            if (!Validation.IsValidNumbersFormat(_size * 2 - 1, _size * 2 + 1, SystemGrid))
-                return;
+            if (!Validation.IsValidNumbersFormat(_size * 2 - 1, _size * 2 + 1, SystemGrid)) return;
 
             (_matrix, _subMatrix) = SystemActions.ReadSystemValues(_size, SystemGrid);
 
-            if (!Validation.IsValidSystem(_matrix))
-                return;
+            if (!Validation.IsValidSystem(_matrix)) return;
 
-            var iterationsAmount = 0;
-            var matrixCopy = Calculations.CopyMatrix(_matrix, ref iterationsAmount);
-            var subMatrixCopy = new double[_size];
-            _subMatrix.CopyTo(subMatrixCopy, 0);
-
+            _results = new double[_size];
+            int iterationsAmount;
+            
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-
+            
             switch (_calculationMethod)
             {
                 case 0:
-                    (_results, iterationsAmount) = Calculations.KramerMethod(matrixCopy, subMatrixCopy, _size);
+                    (_results, iterationsAmount) = 
+                        Calculations.KramerMethod(_matrix.Clone(), _subMatrix.ToArray(), _size);
                     break;
                 case 1:
-                    (_results, iterationsAmount) =
-                        Calculations.GaussMethodWithSingleCoefficients(matrixCopy, subMatrixCopy, _size);
+                    (_results, iterationsAmount) = 
+                        Calculations.GaussMethodWithSingleCoefficients(_matrix.Clone(), _subMatrix.ToArray(), _size);
                     break;
                 case 2:
                     (_results, iterationsAmount) =
-                        Calculations.GaussMethodWithMainElement(matrixCopy, subMatrixCopy, _size);
+                        Calculations.GaussMethodWithMainElement(_matrix.Clone(), _subMatrix.ToArray(), _size);
                     break;
                 default:
-                    Results.Text = "Wrong method of calculations";
+                    MessageBox.Show("Error: Wrong method of calculations");
                     return;
             }
-
+            
             stopwatch.Stop();
-
-            if (!Validation.IsValidResults(_results))
-                return;
-
+            
+            if (!Validation.IsValidResults(_results)) return;
+            
             for (var i = 0; i < _size; i++)
+            {
                 _results[i] = Math.Round(_results[i], 3);
-
-            WriteToFilePanel.Visibility = Visibility.Visible;
-
+            }
+            
             if (_size == 2)
             {
                 GraphicCalculations.GraphicalSolution(_matrix, _subMatrix, _results, Results);
@@ -116,17 +114,19 @@ namespace SystemOfLinearEquationsCalculator
             else
             {
                 for (var i = 0; i < _size; i++)
+                {
                     Results.Text += "x" + (i + 1) + " = " + _results[i] + "\n";
+                }
             }
-
+            
             Results.Text += $"\nAmount of iterations: {iterationsAmount}\n" +
                             $"Calculating time: {stopwatch.Elapsed.TotalSeconds} seconds\n";
+            WriteToFilePanel.Visibility = Visibility.Visible;
         }
 
         private void ClearSystemButton_Click(object sender, RoutedEventArgs e)
         {
-            if (SystemGrid == null)
-                return;
+            if (SystemGrid == null) return;
 
             ClearFields();
             SystemActions.CreateSystem(_size, SystemGrid);

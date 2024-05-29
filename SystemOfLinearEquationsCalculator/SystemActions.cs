@@ -15,13 +15,10 @@ namespace SystemOfLinearEquationsCalculator
             systemGrid.ColumnDefinitions.Clear();
 
             var rows = size * 2 - 1;
-            var cols = size * 2 + 1; 
-                
-            for (var i = 0; i < rows; i++)
-                systemGrid.RowDefinitions.Add(new RowDefinition());
+            var cols = size * 2 + 1;
             
-            for (var i = 0; i < cols; i++)
-                systemGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            Enumerable.Range(0, rows).ToList().ForEach(_ => systemGrid.RowDefinitions.Add(new RowDefinition()));
+            Enumerable.Range(0, cols).ToList().ForEach(_ => systemGrid.ColumnDefinitions.Add(new ColumnDefinition()));
             
             for (var i = 0; i <= rows; i += 2)
             {
@@ -61,12 +58,12 @@ namespace SystemOfLinearEquationsCalculator
             }
         }
         
-        public static (double[,], double[]) ReadSystemValues(int size, Grid systemGrid)
+        public static (Matrix, double[]) ReadSystemValues(int size, Grid systemGrid)
         {
             var rows = size * 2 - 1;
             var cols = size * 2 + 1;
             
-            var matrix = new double[size, size];
+            var matrix = new Matrix(size, size);
             var subMatrix = new double[size];
             
             for (var i = 0; i < rows; i += 2)
@@ -76,8 +73,7 @@ namespace SystemOfLinearEquationsCalculator
                     var element = systemGrid.Children.Cast<UIElement>()
                         .FirstOrDefault(ele => Grid.GetRow(ele) == i && Grid.GetColumn(ele) == j);
 
-                    if (!(element is TextBox textBox))
-                        continue;
+                    if (!(element is TextBox textBox)) continue;
 
                     matrix[i / 2, j / 2] = Math.Round(double.Parse(textBox.Text), 3);
                 }
@@ -88,8 +84,7 @@ namespace SystemOfLinearEquationsCalculator
                 var element = systemGrid.Children.Cast<UIElement>()
                     .FirstOrDefault(ele => Grid.GetRow(ele) == i && Grid.GetColumn(ele) == cols - 1);
 
-                if (!(element is TextBox textBox))
-                    continue;
+                if (!(element is TextBox textBox)) continue;
 
                 subMatrix[i / 2] = Math.Round(double.Parse(textBox.Text), 3);
             }
@@ -97,7 +92,7 @@ namespace SystemOfLinearEquationsCalculator
             return (matrix, subMatrix);
         }
         
-        public static void FillSystem(double[,] matrix, double[] subMatrix, int size, Grid systemGrid)
+        public static void FillSystem(Matrix matrix, double[] subMatrix, int size, Grid systemGrid)
         {
             var rows = size * 2 - 1;
             var cols = size * 2 + 1;
@@ -109,8 +104,7 @@ namespace SystemOfLinearEquationsCalculator
                     var element = systemGrid.Children.Cast<UIElement>()
                         .FirstOrDefault(ele => Grid.GetRow(ele) == i && Grid.GetColumn(ele) == j);
 
-                    if (!(element is TextBox textBox))
-                        continue;
+                    if (!(element is TextBox textBox)) continue;
 
                     textBox.Text = matrix[i / 2, j / 2].ToString("0.000");
                 }
@@ -121,16 +115,15 @@ namespace SystemOfLinearEquationsCalculator
                 var element = systemGrid.Children.Cast<UIElement>()
                     .FirstOrDefault(ele => Grid.GetRow(ele) == i && Grid.GetColumn(ele) == cols - 1);
 
-                if (!(element is TextBox textBox))
-                    continue;
+                if (!(element is TextBox textBox)) continue;
 
                 textBox.Text = subMatrix[i / 2].ToString("0.000");
             }
         }
         
-        public static (double[,], double[]) GenerateSystem(int size)
+        public static (Matrix, double[]) GenerateSystem(int size)
         {
-            var matrix = new double[size, size];
+            var matrix = new Matrix(size, size);
             var subMatrix = new double[size];
             var iterations = 0;
 
@@ -140,11 +133,14 @@ namespace SystemOfLinearEquationsCalculator
 
                 for (var i = 0; i < size; i++)
                 {
-                    subMatrix[i] = Math.Round(random.NextDouble() * 1000, 3);
-
                     for (var j = 0; j < size; j++)
-                        matrix[i, j] = Math.Round(random.NextDouble() * 1000, 3);
+                    {
+                        matrix[i, j] = Math.Round(random.NextDouble() * 2000 - 1000, 3);
+                    }
+                    
+                    subMatrix[i] = Math.Round(random.NextDouble() * 2000 - 1000, 3);
                 }
+                
             } while (Calculations.CalculateDeterminant(matrix, ref iterations) == 0);
 
             return (matrix, subMatrix);

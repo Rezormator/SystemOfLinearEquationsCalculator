@@ -62,6 +62,7 @@
             <Generator>MSBuild:Compile</Generator>
             <SubType>Designer</SubType>
         </ApplicationDefinition>
+        <Compile Include="Matrix.cs" />
         <Compile Include="SystemActions.cs" />
         <Compile Include="SystemToFile.cs" />
         <Compile Include="Validation.cs" />

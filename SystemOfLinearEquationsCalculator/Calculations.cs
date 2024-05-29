@@ -4,26 +4,28 @@ namespace SystemOfLinearEquationsCalculator
 {
     public static class Calculations
     {
-        public static (double[], int) KramerMethod(double[,] matrix, double[] subMatrix, int size)
+        public static (double[], int) KramerMethod(Matrix matrix, double[] subMatrix, int size)
         {
-            var results = new double[size];
             var iterationsAmount = 0;
+            var results = new double[size];
+            
             var determinant = CalculateDeterminant(matrix, ref iterationsAmount);
 
             for (var i = 0; i < size; i++)
             {
                 iterationsAmount++;
                 
-                results[i] = CalculateDeterminant(SubKramerMatrix(CopyMatrix(matrix, ref iterationsAmount), 
-                    subMatrix, i, ref iterationsAmount), ref iterationsAmount) / determinant;
+                var subKramerMatrix = SubKramerMatrix(matrix.Clone(), subMatrix, i, ref iterationsAmount);
+                results[i] = CalculateDeterminant(subKramerMatrix, ref iterationsAmount) / determinant;
             }
+            
             return (results, iterationsAmount);
         }
         
-        public static (double[], int) GaussMethodWithSingleCoefficients(double[,] matrix, double[] subMatrix, int size)
+        public static (double[], int) GaussMethodWithSingleCoefficients(Matrix matrix, double[] subMatrix, int size)
         {
-            var results = new double[size];
             var iterationsAmount = 0;
+            var results = new double[size];
             
             if (matrix[0, 0] == 0)
             {
@@ -31,8 +33,7 @@ namespace SystemOfLinearEquationsCalculator
                 {
                     iterationsAmount++;
                     
-                    if (matrix[i, 0] == 0)
-                        continue;
+                    if (matrix[i, 0] == 0) continue;
 
                     (subMatrix[0], subMatrix[i]) = (subMatrix[i], subMatrix[0]);
 
@@ -41,6 +42,7 @@ namespace SystemOfLinearEquationsCalculator
                         iterationsAmount++;
                         (matrix[0, j], matrix[i, j]) = (matrix[i, j], matrix[0, j]);
                     }
+                    
                     break;
                 }
             }
@@ -58,8 +60,7 @@ namespace SystemOfLinearEquationsCalculator
                     matrix[i, k] /= diagonalElement;
                 }
 
-                if (i == size - 1)
-                    continue;
+                if (i == size - 1) continue;
 
                 for (var j = i + 1; j < size; j++)
                 {
@@ -92,11 +93,12 @@ namespace SystemOfLinearEquationsCalculator
             return (results, iterationsAmount);
         }
 
-        public static (double[], int) GaussMethodWithMainElement(double[,] matrix, double[] subMatrix, int size)
+        public static (double[], int) GaussMethodWithMainElement(Matrix matrix, double[] subMatrix, int size)
         {
-            var maxValuesCols = new int[size];
-            var results = new double[size];
             var iterationsAmount = 0;
+            var results = new double[size];
+            
+            var maxValuesCols = new int[size];
 
             for (var i = 0; i < size; i++)
             {
@@ -142,8 +144,7 @@ namespace SystemOfLinearEquationsCalculator
                 {
                     iterationsAmount++;
                     
-                    if (j != maxValuesCols[i])
-                        sum += matrix[i, j] * results[j];
+                    if (j != maxValuesCols[i]) sum += matrix[i, j] * results[j];
                 }
 
                 results[maxValuesCols[i]] = (subMatrix[i] - sum) / matrix[i, maxValuesCols[i]];
@@ -152,11 +153,11 @@ namespace SystemOfLinearEquationsCalculator
             return (results, iterationsAmount);
         }
         
-        public static double CalculateDeterminant(double[,] matrix, ref int iterationsAmount)
+        public static double CalculateDeterminant(Matrix matrix, ref int iterationsAmount)
         {
-            var size = matrix.GetLength(0);
-            if (size == 1)
-                return matrix[0, 0];
+            var size = matrix.Rows;
+            
+            if (size == 1) return matrix[0, 0];
 
             double result = 0;
 
@@ -164,8 +165,7 @@ namespace SystemOfLinearEquationsCalculator
             {
                 iterationsAmount++;
                 
-                if (matrix[0, i] == 0)
-                    continue;
+                if (matrix[0, i] == 0) continue;
 
                 var minor = GetMinor(matrix, i, size, ref iterationsAmount);
                 result += matrix[0, i] * Math.Pow(-1, i) * CalculateDeterminant(minor, ref iterationsAmount);
@@ -174,28 +174,9 @@ namespace SystemOfLinearEquationsCalculator
             return result;
         }
         
-        public static double[,] CopyMatrix(double[,] matrix, ref int iterationsAmount)
+        private static Matrix SubKramerMatrix(Matrix matrix, double[] subMatrix, int col, ref int iterationsAmount)
         {
-            var size = matrix.GetLength(0);
-            var matrixCopy = new double[size, size];
-
-            for (var i = 0; i < size; i++)
-            {
-                iterationsAmount++;
-
-                for (var j = 0; j < size; j++)
-                {
-                    iterationsAmount++;
-                    matrixCopy[i, j] = matrix[i, j];
-                }
-            }
-
-            return matrixCopy;
-        }
-        
-        private static double[,] SubKramerMatrix(double[,] matrix, double[] subMatrix, int col, ref int iterationsAmount)
-        {
-            for (var i = 0; i < subMatrix.Length; i++)
+            for (var i = 0; i < matrix.Rows; i++)
             {
                 iterationsAmount++;
                 matrix[i, col] = subMatrix[i];
@@ -204,23 +185,20 @@ namespace SystemOfLinearEquationsCalculator
             return matrix;
         }
 
-        private static double[,] GetMinor(double[,] matrix, int col, int size, ref int iterationsAmount)
+        private static Matrix GetMinor(Matrix matrix, int col, int size, ref int iterationsAmount)
         {
-            var minor = new double[size - 1, size - 1];
+            var minor = new Matrix(size - 1, size - 1);
 
             for (int i = 0, p = 0; i < size; i++)
             {
                 iterationsAmount++;
                 
-                if (i == 0)
-                    continue;
+                if (i == 0) continue;
 
                 for (int j = 0, q = 0; j < size; j++)
                 {
                     iterationsAmount++;
-
-                    if (j != col)
-                        minor[p, q++] = matrix[i, j];
+                    if (j != col) minor[p, q++] = matrix[i, j];
                 }
 
                 p++;
@@ -229,9 +207,9 @@ namespace SystemOfLinearEquationsCalculator
             return minor;
         }
 
-        private static (int, int, double) FindMaxElement(double[,] matrix, int start, ref int iterationsAmount)
+        private static (int, int, double) FindMaxElement(Matrix matrix, int start, ref int iterationsAmount)
         {
-            var size = matrix.GetLength(0);
+            var size = matrix.Rows;
             var max = Math.Abs(matrix[start, 0]);
             int row = start, col = 0;
 
@@ -243,8 +221,7 @@ namespace SystemOfLinearEquationsCalculator
                 {
                     iterationsAmount++;
                     
-                    if (Math.Abs(matrix[i, j]) < Math.Abs(max))
-                        continue;
+                    if (Math.Abs(matrix[i, j]) < Math.Abs(max)) continue;
 
                     max = matrix[i, j];
                     row = i;
