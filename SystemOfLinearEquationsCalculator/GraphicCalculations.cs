@@ -103,37 +103,37 @@ namespace SystemOfLinearEquationsCalculator
             system.Children.Add(textBlock);
         }
         
-        private static Line BuildLine(double a, double b, double c)
+        private static Line BuildLine(double firstCoefficient, double secondCoefficient, double freeMember)
         {
             var line = new Line { Stroke = Brushes.Black, StrokeThickness = 2 };
             bool change;
 
-            if (a < b)
+            if (firstCoefficient < secondCoefficient)
             {
                 line.X1 = -200;
-                line.Y1 = -(c - a * -200) / b;
+                line.Y1 = -(freeMember - firstCoefficient * -200) / secondCoefficient;
                 line.X2 = 200;
-                line.Y2 = -(c - a * 200) / b;
+                line.Y2 = -(freeMember - firstCoefficient * 200) / secondCoefficient;
             }
             else
             {
                 line.Y1 = 200;
-                line.X1 = (c - b * -200) / a;
+                line.X1 = (freeMember - secondCoefficient * -200) / firstCoefficient;
                 line.Y2 = -200;
-                line.X2 = (c - b * 200) / a;
+                line.X2 = (freeMember - secondCoefficient * 200) / firstCoefficient;
             }
             
             (line.Y1, change) = SubBuildLine(line.Y1);
-            if (change) line.X1 = (c - b * -line.Y1) / a;
+            if (change) line.X1 = (freeMember - secondCoefficient * -line.Y1) / firstCoefficient;
             
             (line.X1, change) = SubBuildLine(line.X1);
-            if (change) line.Y1 = -(c - a * line.X1) / b;
+            if (change) line.Y1 = -(freeMember - firstCoefficient * line.X1) / secondCoefficient;
             
             (line.Y2, change) = SubBuildLine(line.Y2);
-            if (change) line.X2 = (c - b * -line.Y2) / a;
+            if (change) line.X2 = (freeMember - secondCoefficient * -line.Y2) / firstCoefficient;
             
             (line.X2, change) = SubBuildLine(line.X2);
-            if (change) line.Y2 = -(c - a * line.X2) / b;
+            if (change) line.Y2 = -(freeMember - firstCoefficient * line.X2) / secondCoefficient;
             
             return line;
         }
