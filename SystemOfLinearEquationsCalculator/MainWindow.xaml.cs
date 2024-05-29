@@ -71,8 +71,8 @@ namespace SystemOfLinearEquationsCalculator
 
             if (!Validation.IsValidSystem(_matrix)) return;
 
-            _results = new double[_size];
-            int iterationsAmount;
+            var iterationsAmount = 0;
+            var matrixCopy = _matrix.Clone(ref iterationsAmount);
             
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -81,15 +81,15 @@ namespace SystemOfLinearEquationsCalculator
             {
                 case 0:
                     (_results, iterationsAmount) = 
-                        Calculations.KramerMethod(_matrix.Clone(), _subMatrix.ToArray(), _size);
+                        Calculations.KramerMethod(matrixCopy, _subMatrix.ToArray(), _size);
                     break;
                 case 1:
                     (_results, iterationsAmount) = 
-                        Calculations.GaussMethodWithSingleCoefficients(_matrix.Clone(), _subMatrix.ToArray(), _size);
+                        Calculations.GaussMethodWithSingleCoefficients(matrixCopy, _subMatrix.ToArray(), _size);
                     break;
                 case 2:
                     (_results, iterationsAmount) =
-                        Calculations.GaussMethodWithMainElement(_matrix.Clone(), _subMatrix.ToArray(), _size);
+                        Calculations.GaussMethodWithMainElement(matrixCopy, _subMatrix.ToArray(), _size);
                     break;
                 default:
                     MessageBox.Show("Error: Wrong method of calculations");

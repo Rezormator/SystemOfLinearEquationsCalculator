@@ -38,7 +38,7 @@ namespace SystemOfLinearEquationsCalculator
         public static bool IsValidSystem(Matrix matrix)
         {
             var iterationsAmount = 0;
-            if (Calculations.CalculateDeterminant(matrix, ref iterationsAmount) != 0) return true;
+            if (matrix.CalculateDeterminant(ref iterationsAmount) != 0) return true;
             MessageBox.Show("Error: determinant equal 0");
             return false;
         }

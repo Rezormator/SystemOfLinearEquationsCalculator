@@ -141,7 +141,7 @@ namespace SystemOfLinearEquationsCalculator
                     subMatrix[i] = Math.Round(random.NextDouble() * 2000 - 1000, 3);
                 }
                 
-            } while (Calculations.CalculateDeterminant(matrix, ref iterations) == 0);
+            } while (matrix.CalculateDeterminant(ref iterations) == 0);
 
             return (matrix, subMatrix);
         }

@@ -9,14 +9,15 @@ namespace SystemOfLinearEquationsCalculator
             var iterationsAmount = 0;
             var results = new double[size];
             
-            var determinant = CalculateDeterminant(matrix, ref iterationsAmount);
+            var determinant = matrix.CalculateDeterminant(ref iterationsAmount);
 
             for (var i = 0; i < size; i++)
             {
                 iterationsAmount++;
-                
-                var subKramerMatrix = SubKramerMatrix(matrix.Clone(), subMatrix, i, ref iterationsAmount);
-                results[i] = CalculateDeterminant(subKramerMatrix, ref iterationsAmount) / determinant;
+
+                var matrixCopy = matrix.Clone(ref iterationsAmount);
+                var subKramerMatrix = SubKramerMatrix(matrixCopy, subMatrix, i, ref iterationsAmount);
+                results[i] = subKramerMatrix.CalculateDeterminant(ref iterationsAmount) / determinant;
             }
             
             return (results, iterationsAmount);
@@ -153,27 +154,6 @@ namespace SystemOfLinearEquationsCalculator
             return (results, iterationsAmount);
         }
         
-        public static double CalculateDeterminant(Matrix matrix, ref int iterationsAmount)
-        {
-            var size = matrix.Rows;
-            
-            if (size == 1) return matrix[0, 0];
-
-            double result = 0;
-
-            for (var i = 0; i < size; i++)
-            {
-                iterationsAmount++;
-                
-                if (matrix[0, i] == 0) continue;
-
-                var minor = GetMinor(matrix, i, size, ref iterationsAmount);
-                result += matrix[0, i] * Math.Pow(-1, i) * CalculateDeterminant(minor, ref iterationsAmount);
-            }
-
-            return result;
-        }
-        
         private static Matrix SubKramerMatrix(Matrix matrix, double[] subMatrix, int col, ref int iterationsAmount)
         {
             for (var i = 0; i < matrix.Rows; i++)
@@ -183,28 +163,6 @@ namespace SystemOfLinearEquationsCalculator
             }
 
             return matrix;
-        }
-
-        private static Matrix GetMinor(Matrix matrix, int col, int size, ref int iterationsAmount)
-        {
-            var minor = new Matrix(size - 1, size - 1);
-
-            for (int i = 0, p = 0; i < size; i++)
-            {
-                iterationsAmount++;
-                
-                if (i == 0) continue;
-
-                for (int j = 0, q = 0; j < size; j++)
-                {
-                    iterationsAmount++;
-                    if (j != col) minor[p, q++] = matrix[i, j];
-                }
-
-                p++;
-            }
-
-            return minor;
         }
 
         private static (int, int, double) FindMaxElement(Matrix matrix, int start, ref int iterationsAmount)
