@@ -106,7 +106,6 @@ namespace SystemOfLinearEquationsCalculator
         private static Line BuildLine(double firstCoefficient, double secondCoefficient, double freeMember)
         {
             var line = new Line { Stroke = Brushes.Black, StrokeThickness = 2 };
-            bool change;
 
             if (firstCoefficient < secondCoefficient)
             {
@@ -122,6 +121,8 @@ namespace SystemOfLinearEquationsCalculator
                 line.Y2 = -200;
                 line.X2 = (freeMember - secondCoefficient * 200) / firstCoefficient;
             }
+            
+            bool change;
             
             (line.Y1, change) = SubBuildLine(line.Y1);
             if (change) line.X1 = (freeMember - secondCoefficient * -line.Y1) / firstCoefficient;
