@@ -64,7 +64,7 @@ namespace SystemOfLinearEquationsCalculator
                 var minor = GetMinor(i, ref iterationsAmount);
                 result += Data[0, i] * Math.Pow(-1, i) * minor.CalculateDeterminant(ref iterationsAmount);
             }
-
+            
             return result;
         }
         

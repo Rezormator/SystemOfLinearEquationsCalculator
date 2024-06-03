@@ -38,8 +38,13 @@ namespace SystemOfLinearEquationsCalculator
         public static bool IsValidSystem(Matrix matrix)
         {
             var iterationsAmount = 0;
-            if (matrix.CalculateDeterminant(ref iterationsAmount) != 0) return true;
-            MessageBox.Show("Error: determinant equal 0");
+            var determinant = matrix.CalculateDeterminant(ref iterationsAmount);
+            
+            if (determinant != 0 && !double.IsInfinity(determinant)) return true;
+            
+            if (determinant == 0) MessageBox.Show("Error: determinant equal 0");
+            if (double.IsInfinity(determinant)) MessageBox.Show("Error: overflow of type double");
+            
             return false;
         }
         
