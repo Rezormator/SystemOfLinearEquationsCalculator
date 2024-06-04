@@ -108,7 +108,7 @@ namespace SystemOfLinearEquationsCalculator
             var line = new Line { Stroke = Brushes.Black, StrokeThickness = 2 };
             bool change;
 
-            if (firstCoefficient < secondCoefficient)
+            if (Math.Abs(firstCoefficient) < Math.Abs(secondCoefficient))
             {
                 line.X1 = -200;
                 line.Y1 = -(freeMember - firstCoefficient * -200) / secondCoefficient;
