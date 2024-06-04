@@ -106,7 +106,7 @@ namespace SystemOfLinearEquationsCalculator
 
                     if (!(element is TextBox textBox)) continue;
 
-                    textBox.Text = matrix[i / 2, j / 2].ToString("0.000");
+                    textBox.Text = matrix[i / 2, j / 2].ToString("0.000000000");
                 }
             }
 
@@ -117,7 +117,7 @@ namespace SystemOfLinearEquationsCalculator
 
                 if (!(element is TextBox textBox)) continue;
 
-                textBox.Text = subMatrix[i / 2].ToString("0.000");
+                textBox.Text = subMatrix[i / 2].ToString("0.000000000");
             }
         }
         
@@ -135,10 +135,10 @@ namespace SystemOfLinearEquationsCalculator
                 {
                     for (var j = 0; j < size; j++)
                     {
-                        matrix[i, j] = Math.Round(random.NextDouble() * 2000 - 1000, 3);
+                        matrix[i, j] = Math.Round(random.NextDouble() * 2000 - 1000, 9);
                     }
                     
-                    subMatrix[i] = Math.Round(random.NextDouble() * 2000 - 1000, 3);
+                    subMatrix[i] = Math.Round(random.NextDouble() * 2000 - 1000, 9);
                 }
                 
             } while (matrix.CalculateDeterminant(ref iterations) == 0);

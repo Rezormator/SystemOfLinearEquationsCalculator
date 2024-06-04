@@ -45,7 +45,7 @@ namespace SystemOfLinearEquationsCalculator
                     }
                     
                     break;
-                }
+                }   
             }
 
             for (var i = 0; i < size; i++)

@@ -102,7 +102,7 @@ namespace SystemOfLinearEquationsCalculator
             
             for (var i = 0; i < _size; i++)
             {
-                _results[i] = Math.Round(_results[i], 3);
+                _results[i] = Math.Round(_results[i], 9);
             }
             
             if (_size == 2)
